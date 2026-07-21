@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Install the interactive OBS overlay that lets chat vote for one of three Kick clips, then plays the winner with audio."><title>BRB Clip Vote System | Yangzhi Jianghu Workshop</title><style>
+:root{--ink:#05080c;--panel:#0d151e;--line:rgba(112,171,205,.24);--blue:#13a8ff;--blue2:#7ed2ff;--text:#edf6fb;--muted:#9eb0ba;--gold:#e6b642}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 80% 0,rgba(19,168,255,.12),transparent 30rem),#05080c;color:var(--text);font-family:Arial,Helvetica,sans-serif;line-height:1.7}a{color:var(--blue2)}.topbar{position:sticky;top:0;z-index:9;display:flex;justify-content:space-between;align-items:center;padding:16px clamp(20px,5vw,70px);background:rgba(5,8,12,.9);border-bottom:1px solid var(--line);backdrop-filter:blur(14px)}.topbar a{text-decoration:none;text-transform:uppercase;font-size:11px;font-weight:800;letter-spacing:.14em}.brand{font:18px Georgia,serif!important;text-transform:none!important;color:white!important}.hero{max-width:1120px;margin:50px auto 35px;padding:0 24px}.hero img{width:100%;aspect-ratio:16/9;object-fit:cover;border:1px solid rgba(126,210,255,.45);box-shadow:0 22px 70px rgba(0,0,0,.5)}.eyebrow{margin:28px 0 8px;color:var(--blue2);text-transform:uppercase;letter-spacing:.22em;font-size:11px;font-weight:800}.hero h1{margin:0;font:400 clamp(42px,6vw,72px)/1 Georgia,serif;letter-spacing:-.04em}.subtitle{max-width:760px;color:var(--muted);font-size:17px}.video{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:24px}.button{display:inline-flex;align-items:center;gap:10px;padding:12px 18px;background:var(--blue);color:#00131e;text-decoration:none;text-transform:uppercase;font-size:11px;font-weight:900;letter-spacing:.12em}.button.secondary{background:transparent;color:var(--blue2);border:1px solid rgba(126,210,255,.4)}article{max-width:980px;margin:0 auto 100px;padding:35px clamp(22px,5vw,70px);background:linear-gradient(145deg,rgba(15,25,35,.98),rgba(7,11,16,.98));border:1px solid var(--line)}h2{margin:50px 0 14px;padding-bottom:9px;border-bottom:1px solid var(--line);font:400 31px Georgia,serif;color:white}article>h2:first-child{margin-top:0}p,li{color:#bdcbd3}strong,code{color:white}code{padding:2px 5px;background:#05080c;border:1px solid var(--line)}ul,ol{padding-left:24px}li{margin:7px 0}table{width:100%;border-collapse:collapse;margin:22px 0 30px;font-size:14px}th{padding:13px;text-align:left;background:#132432;color:var(--blue2);border:1px solid #284150}td{padding:12px 13px;vertical-align:top;border:1px solid #263946;color:#b9c8d0}tr:nth-child(even) td{background:rgba(255,255,255,.025)}article img{display:block;width:100%;height:auto;margin:25px auto 8px;border:1px solid #385365;box-shadow:0 14px 35px rgba(0,0,0,.35)}article em{display:block;color:#8297a3;text-align:center;font-size:13px}.note{margin:25px 0;padding:18px;border-left:3px solid var(--gold);background:rgba(230,182,66,.07);color:#e9dfc4}.flow{padding:18px;background:#05080c;border:1px solid var(--line);color:#cfe7f5;font-family:Consolas,monospace;white-space:pre-line}footer{padding:36px;text-align:center;border-top:1px solid var(--line);color:#607580;font-size:11px;text-transform:uppercase;letter-spacing:.13em}@media(max-width:650px){.topbar{gap:14px}.brand{font-size:14px!important}.hero{margin-top:30px}article{border-left:0;border-right:0;padding:25px 18px}table{display:block;overflow-x:auto;white-space:normal}.video{align-items:stretch;flex-direction:column}.button{justify-content:center}}
+</style></head>
+<body><header class="topbar"><a class="brand" href="../index.html">Yangzhi Jianghu Workshop</a><a href="../index.html#projects">← Return to the forge</a></header>
+<section class="hero"><img src="../assets/brb-clip-vote.webp" alt="BRB Clip Vote System"><p class="eyebrow">Workshop field manual</p><h1>BRB Clip Vote System</h1><p class="subtitle">Install the interactive OBS overlay that lets chat vote for one of three Kick clips, then plays the winner with audio.</p>
+<div class="video"><a class="button" href="https://youtu.be/gXdkGb_ak5o" target="_blank" rel="noopener">Watch the YouTube demonstration ▶</a></div></section>
+<article><p><strong>Streamlined OBS + Streamer.bot Setup Guide</strong></p>
+<p><em>Simple install notes for the working Kick-direct clip vote
+system, with optional local test mode.</em></p>
+<h2 id="before-you-use-this-change-these-settings">1. Before You Use
+This: Change These Settings</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Where</strong></th>
+<th><strong>Change this</strong></th>
+<th><strong>Notes</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Streamer.bot → BRB Vote - Pick Kick Clips</td>
+<td>targetUserName = YOUR_KICK_CHANNEL_NAME</td>
+<td>This is the main channel-specific setting. It controls which Kick
+channel clips are pulled from.</td>
+</tr>
+<tr class="even">
+<td>OBS</td>
+<td>Scene name = BRB Clip Vote<br />
+Browser source = BRB_ClipVote_Overlay</td>
+<td>Keep these names unless you also update the Streamer.bot actions and
+overlay references.<br />
+Point Browser source to = brb_clip_vote.html file.</td>
+</tr>
+<tr class="odd">
+<td>HTML CONFIG block</td>
+<td>TITLE_TEXT / SUBTITLE_TEXT / TIMER_LABEL_TEXT</td>
+<td>Optional branding text. Leave STREAMERBOT_WS_URL as
+ws://127.0.0.1:8080/ unless your Streamer.bot WebSocket port is
+different.</td>
+</tr>
+<tr class="even">
+<td>Optional local mode</td>
+<td>BRB Vote - Pick Local Clips → clipFolder</td>
+<td>Only needed for local mode. Also run the local clip server BAT.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="what-this-system-does">2. What This System Does</h2>
+<ul>
+<li><p>When the BRB Clip Vote scene starts, Streamer.bot pulls Kick
+clips directly, picks three random options, and sends those playable
+URLs to the HTML overlay.</p></li>
+<li><p>Chat votes by typing 1, 2, or 3. Vote totals update live under
+each panel.</p></li>
+<li><p>When the timer reaches zero, voting locks and the winning clip
+expands and plays with audio.</p></li>
+<li><p>The overlay waits for the winning video to finish, then calls BRB
+Vote - Winner Finished. The system starts the next round only if the BRB
+scene is still active.</p></li>
+<li><p>If nobody votes, the system picks a random winner. Ties are
+broken randomly among tied clips.</p></li>
+</ul>
+<h2 id="required-names">3. Required Names</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Item</strong></th>
+<th><strong>Required / Recommended Name</strong></th>
+<th><strong>Notes</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>OBS scene</td>
+<td>BRB Clip Vote</td>
+<td>Controller uses this scene name to start/stop the system.</td>
+</tr>
+<tr class="even">
+<td>Browser source</td>
+<td>BRB_ClipVote_Overlay</td>
+<td>Loads the voting overlay. 1920 x 1080 recommended.</td>
+</tr>
+<tr class="odd">
+<td>Overlay file</td>
+<td>brb_clip_vote.html</td>
+<td>Use the clean unified HTML file.</td>
+</tr>
+<tr class="even">
+<td>Background source</td>
+<td>Vote Background</td>
+<td>Any background image/video/layout source.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="obs-setup">4. OBS Setup</h2>
+<p>1. Create a scene named BRB Clip Vote.</p>
+<p>2. Add your background source first.</p>
+<p>3. Add a Browser Source named BRB_ClipVote_Overlay.</p>
+<p>4. Set the Browser Source size to 1920 x 1080.</p>
+<p>5. Load brb_clip_vote.html as the browser source file.</p>
+<p>6. Put the browser source above the background source.</p>
+<p>7. For winner audio, make sure the browser source is not muted. If
+using “Control audio via OBS,” check the OBS mixer and Advanced Audio
+Properties.</p>
+<h2 id="streamer.bot-websocket-setup">5. Streamer.bot WebSocket
+Setup</h2>
+<ul>
+<li><p>Open Streamer.bot before testing the overlay.</p></li>
+<li><p>Make sure Streamer.bot is connected to OBS.</p></li>
+<li><p>Enable Streamer.bot WebSocket Server.</p></li>
+<li><p>Default overlay setting: ws://127.0.0.1:8080/.</p></li>
+<li><p>Authentication should remain off unless you also update the HTML
+connection logic.</p></li>
+<li><p>The overlay reads Non-Persisted Globals through WebSocket
+polling.</p></li>
+</ul>
+<h2 id="streamer.bot-actions">6. Streamer.bot Actions</h2>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Action</strong></th>
+<th><strong>Simple job</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>BRB Vote - Controller</td>
+<td>Starts Initialize when entering BRB Clip Vote; runs Stop when
+leaving.</td>
+</tr>
+<tr class="even">
+<td>BRB Vote - Initialize</td>
+<td>Enables the loop, resets state, sets loading, then calls Start
+Round.</td>
+</tr>
+<tr class="odd">
+<td>BRB Vote - Start Round</td>
+<td>Resets votes/timer, picks three clips, opens voting, starts
+countdown.</td>
+</tr>
+<tr class="even">
+<td>BRB Vote - Pick Kick Clips</td>
+<td>Pulls Kick clips, picks three candidates, resolves playable
+URLs.</td>
+</tr>
+<tr class="odd">
+<td>ClipCandidate1 / 2 / 3</td>
+<td>Passes each chosen clip ID into Resolve Kick Clip Slot.</td>
+</tr>
+<tr class="even">
+<td>Resolve Kick Clip Slot</td>
+<td>Runs Kick → GetClipVideoUrl, then stores the resolved URL.</td>
+</tr>
+<tr class="odd">
+<td>Store Resolved BRB Vote Clip</td>
+<td>Writes brbVoteClip1/2/3 and optional title/preview/page
+globals.</td>
+</tr>
+<tr class="even">
+<td>BRB Vote - Pick Local Clips</td>
+<td>Optional local test picker. Scans a local folder and sets filename
+globals.</td>
+</tr>
+<tr class="odd">
+<td>BRB Vote - Chat Vote</td>
+<td>Accepts chat messages 1, 2, or 3 and tracks one vote per
+viewer.</td>
+</tr>
+<tr class="even">
+<td>BRB Vote - End Round</td>
+<td>Locks voting, handles ties/no votes, sets brbVoteWinner and status
+winner.</td>
+</tr>
+<tr class="odd">
+<td>BRB Vote - Play Winner</td>
+<td>No fixed delay. The overlay plays the winner and calls Winner
+Finished when video ends.</td>
+</tr>
+<tr class="even">
+<td>BRB Vote - Winner Finished</td>
+<td>Safety bridge from overlay. Calls Next Round only if status is
+winner and continue is true.</td>
+</tr>
+<tr class="odd">
+<td>BRB Vote - Next Round</td>
+<td>Starts another round if brbVoteContinue is true.</td>
+</tr>
+<tr class="even">
+<td>BRB Vote - Stop</td>
+<td>Stops loop, clears votes/winner/clips/timer, returns status to
+idle.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="changing-the-voting-time">7. Changing the Voting Time</h2>
+<p>To increase or decrease the voting window, change the brbVoteTimer
+value in these Streamer.bot actions:</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Action</strong></th>
+<th><strong>What to change</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>BRB Vote - Initialize</td>
+<td>Set brbVoteTimer to the desired default, such as 30, 45, or 60.</td>
+</tr>
+<tr class="even">
+<td>BRB Vote - Start Round</td>
+<td>Set brbVoteTimer to the same value before countdown_timer runs. This
+controls each live round.</td>
+</tr>
+<tr class="odd">
+<td>BRB Vote - Stop</td>
+<td>Set brbVoteTimer to the same value so the overlay resets cleanly
+when leaving the scene.</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>Example: For a 45-second vote, set brbVoteTimer = 45 in Initialize,
+Start Round, and Stop.</p>
+</blockquote>
+<h2 id="clip-source-modes">9. Clip Source Modes</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Mode</strong></th>
+<th><strong>Streamer.bot action to call in Start Round</strong></th>
+<th><strong>HTML behavior</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Online Kick mode</td>
+<td>BRB Vote - Pick Kick Clips</td>
+<td>Uses direct https:// video URLs. No local server needed.</td>
+</tr>
+<tr class="even">
+<td>Optional local mode</td>
+<td>BRB Vote - Pick Local Clips</td>
+<td>Receives filenames and routes them through LOCAL_CLIP_SERVER,
+usually http://127.0.0.1:8123/. Run the local server BAT first.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="non-persisted-globals">10. Non-Persisted Globals</h2>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Global</strong></th>
+<th><strong>Purpose</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>brbVoteStatus</td>
+<td>idle, loading, voting, or winner.</td>
+</tr>
+<tr class="even">
+<td>brbVoteMode</td>
+<td>Preview mode: live or thumbnail.</td>
+</tr>
+<tr class="odd">
+<td>brbVoteTimer</td>
+<td>Countdown time in seconds.</td>
+</tr>
+<tr class="even">
+<td>brbVote1 / brbVote2 / brbVote3</td>
+<td>Vote totals.</td>
+</tr>
+<tr class="odd">
+<td>brbVoteClip1 / brbVoteClip2 / brbVoteClip3</td>
+<td>Selected clip URLs or local filenames for current round.</td>
+</tr>
+<tr class="even">
+<td>brbVoteVoters</td>
+<td>Tracks who already voted this round.</td>
+</tr>
+<tr class="odd">
+<td>brbVoteLocked</td>
+<td>Prevents new votes after voting closes.</td>
+</tr>
+<tr class="even">
+<td>brbVoteContinue</td>
+<td>Controls whether rounds keep looping.</td>
+</tr>
+<tr class="odd">
+<td>brbVoteWinner</td>
+<td>Winning clip number: 1, 2, or 3.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="section"></h2>
+<h2 id="first-test-pass">11. First Test Pass</h2>
+<p>1. Start Streamer.bot and OBS.</p>
+<p>2. Switch to BRB Clip Vote.</p>
+<p>3. Confirm the overlay appears and clips load.</p>
+<p>4. Send chat messages 1, 2, and 3.</p>
+<p>5. Confirm vote counts update correctly.</p>
+<p>6. Let the timer reach zero.</p>
+<p>7. Confirm the winner expands and plays with audio.</p>
+<p>8. Wait for the winner clip to finish; confirm the next round starts
+automatically.</p>
+<p>9. Switch away from BRB Clip Vote during voting and during winner
+playback; confirm the system stops cleanly.</p>
+</article><footer>The digital workshop of BlueFacedBeast · Forged in the Jianghu</footer></body></html>

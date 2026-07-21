@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Configure OBS and Streamer.bot to automatically play random Kick clips while your stream is on the BRB scene."><title>Kick Be Right Back Highlight Reel | Yangzhi Jianghu Workshop</title><style>
+:root{--ink:#05080c;--panel:#0d151e;--line:rgba(112,171,205,.24);--blue:#13a8ff;--blue2:#7ed2ff;--text:#edf6fb;--muted:#9eb0ba;--gold:#e6b642}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 80% 0,rgba(19,168,255,.12),transparent 30rem),#05080c;color:var(--text);font-family:Arial,Helvetica,sans-serif;line-height:1.7}a{color:var(--blue2)}.topbar{position:sticky;top:0;z-index:9;display:flex;justify-content:space-between;align-items:center;padding:16px clamp(20px,5vw,70px);background:rgba(5,8,12,.9);border-bottom:1px solid var(--line);backdrop-filter:blur(14px)}.topbar a{text-decoration:none;text-transform:uppercase;font-size:11px;font-weight:800;letter-spacing:.14em}.brand{font:18px Georgia,serif!important;text-transform:none!important;color:white!important}.hero{max-width:1120px;margin:50px auto 35px;padding:0 24px}.hero img{width:100%;aspect-ratio:16/9;object-fit:cover;border:1px solid rgba(126,210,255,.45);box-shadow:0 22px 70px rgba(0,0,0,.5)}.eyebrow{margin:28px 0 8px;color:var(--blue2);text-transform:uppercase;letter-spacing:.22em;font-size:11px;font-weight:800}.hero h1{margin:0;font:400 clamp(42px,6vw,72px)/1 Georgia,serif;letter-spacing:-.04em}.subtitle{max-width:760px;color:var(--muted);font-size:17px}.video{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:24px}.button{display:inline-flex;align-items:center;gap:10px;padding:12px 18px;background:var(--blue);color:#00131e;text-decoration:none;text-transform:uppercase;font-size:11px;font-weight:900;letter-spacing:.12em}.button.secondary{background:transparent;color:var(--blue2);border:1px solid rgba(126,210,255,.4)}article{max-width:980px;margin:0 auto 100px;padding:35px clamp(22px,5vw,70px);background:linear-gradient(145deg,rgba(15,25,35,.98),rgba(7,11,16,.98));border:1px solid var(--line)}h2{margin:50px 0 14px;padding-bottom:9px;border-bottom:1px solid var(--line);font:400 31px Georgia,serif;color:white}article>h2:first-child{margin-top:0}p,li{color:#bdcbd3}strong,code{color:white}code{padding:2px 5px;background:#05080c;border:1px solid var(--line)}ul,ol{padding-left:24px}li{margin:7px 0}table{width:100%;border-collapse:collapse;margin:22px 0 30px;font-size:14px}th{padding:13px;text-align:left;background:#132432;color:var(--blue2);border:1px solid #284150}td{padding:12px 13px;vertical-align:top;border:1px solid #263946;color:#b9c8d0}tr:nth-child(even) td{background:rgba(255,255,255,.025)}article img{display:block;width:100%;height:auto;margin:25px auto 8px;border:1px solid #385365;box-shadow:0 14px 35px rgba(0,0,0,.35)}article em{display:block;color:#8297a3;text-align:center;font-size:13px}.note{margin:25px 0;padding:18px;border-left:3px solid var(--gold);background:rgba(230,182,66,.07);color:#e9dfc4}.flow{padding:18px;background:#05080c;border:1px solid var(--line);color:#cfe7f5;font-family:Consolas,monospace;white-space:pre-line}footer{padding:36px;text-align:center;border-top:1px solid var(--line);color:#607580;font-size:11px;text-transform:uppercase;letter-spacing:.13em}@media(max-width:650px){.topbar{gap:14px}.brand{font-size:14px!important}.hero{margin-top:30px}article{border-left:0;border-right:0;padding:25px 18px}table{display:block;overflow-x:auto;white-space:normal}.video{align-items:stretch;flex-direction:column}.button{justify-content:center}}
+</style></head>
+<body><header class="topbar"><a class="brand" href="../index.html">Yangzhi Jianghu Workshop</a><a href="../index.html#projects">← Return to the forge</a></header>
+<section class="hero"><img src="../assets/kick-highlight.webp" alt="Kick Be Right Back Highlight Reel"><p class="eyebrow">Workshop field manual</p><h1>Kick Be Right Back Highlight Reel</h1><p class="subtitle">Configure OBS and Streamer.bot to automatically play random Kick clips while your stream is on the BRB scene.</p>
+<div class="video"><a class="button" href="https://youtu.be/AMQ7kQZiEAE" target="_blank" rel="noopener">Watch the YouTube demonstration ▶</a></div></section>
+<article><p>Kick BRB Highlight Reel</p>
+<h2 id="purpose">1. Purpose</h2>
+<p>This setup automatically plays random Kick clips while OBS is on the
+BRB scene. When a clip ends, brb.html asks Streamer.bot for the next
+Kick clip.</p>
+<p class="flow">Enter BRB scene<br />
+-&gt; BRB_Start_Kick_Clips<br />
+-&gt; BRB_Play_Random_Kick_Clip<br />
+-&gt; Kick_BRB_Clip_Core<br />
+-&gt; brb.html plays clip<br />
+-&gt; video.onended calls BRB_Play_Random_Kick_Clip</p>
+<h2 id="obs-setup">2. OBS Setup</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Source</strong></th>
+<th><strong>Recommended Name</strong></th>
+<th><strong>Purpose</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Scene</td>
+<td>BRB</td>
+<td>Scene that starts and stops the reel.<br />
+TV_Frame_Border</td>
+</tr>
+<tr class="even">
+<td>Background</td>
+<td>BRB_Image</td>
+<td>Main BRB background.</td>
+</tr>
+<tr class="odd">
+<td>Browser Source</td>
+<td>BRBClipBrowser</td>
+<td>Displays brb.html and plays the Kick clip.</td>
+</tr>
+<tr class="even">
+<td>Idle Static*</td>
+<td>static</td>
+<td>Shown when no clip is playing; hidden while clips play.</td>
+</tr>
+</tbody>
+</table>
+<p>*not included</p>
+<p><img src="../assets/highlight-obs.webp" loading="lazy" alt="Tutorial screenshot" /></p>
+<p><em>Figure 1. OBS BRB scene with BRBClipBrowser placed inside the TV
+screen area.</em></p>
+<h2 id="required-html-player">3. Required HTML Player</h2>
+<p>Use a local player file, for example:</p>
+<p>E:\brb.html</p>
+<p>Streamer.bot loads it with a video URL:</p>
+<p>brb.html?video=https%3A%2F%2Fclips.kick.com%2Ftmp%2Fexample.mp4&amp;thumbnail_url=...&amp;title=...&amp;time=...</p>
+<h2 id="action-structure">4. Action Structure</h2>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Action</strong></th>
+<th><strong>Job</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>BRB_Start_Kick_Clips</td>
+<td>Simple bridge that calls BRB_Play_Random_Kick_Clip.</td>
+</tr>
+<tr class="even">
+<td>BRB_Play_Random_Kick_Clip</td>
+<td>Checks that OBS is still on BRB, then calls Kick_BRB_Clip_Core.</td>
+</tr>
+<tr class="odd">
+<td>Kick_BRB_Clip_Core</td>
+<td>Pulls Kick clips, picks one, resolves MP4, loads brb.html, and shows
+the browser.</td>
+</tr>
+<tr class="even">
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Only BRB_Reel_Stop should show static.</p>
+<p><img src="../assets/highlight-streamerbot.webp" loading="lazy" alt="Tutorial screenshot" /></p>
+<p><em>Figure 2. Streamer.bot Kick_BRB_Clip_Core action with the target
+channel, GetClips, and clip-loading steps.</em></p>
+<h2 id="why-brb.html-handles-the-next-clip">5. Why brb.html Handles the
+Next Clip</h2>
+<p>Kick.bot clip arguments normally include id, title, preview, video,
+and link, but not a reliable duration field. The clean method is to let
+brb.html detect the real video end.</p>
+<p class="flow">video.onended<br />
+-&gt; Streamer.bot WebSocket DoAction<br />
+-&gt; BRB_Play_Random_Kick_Clip</p>
+</article><footer>The digital workshop of BlueFacedBeast · Forged in the Jianghu</footer></body></html>

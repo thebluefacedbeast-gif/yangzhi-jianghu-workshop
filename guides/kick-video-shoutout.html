@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="A streamlined OBS and Streamer.bot guide for showing Kick creator clips and profile information during shoutouts."><title>Kick Video Shoutout Setup Guide | Yangzhi Jianghu Workshop</title><style>
+:root{--ink:#05080c;--panel:#0d151e;--line:rgba(112,171,205,.24);--blue:#13a8ff;--blue2:#7ed2ff;--text:#edf6fb;--muted:#9eb0ba;--gold:#e6b642}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 80% 0,rgba(19,168,255,.12),transparent 30rem),#05080c;color:var(--text);font-family:Arial,Helvetica,sans-serif;line-height:1.7}a{color:var(--blue2)}.topbar{position:sticky;top:0;z-index:9;display:flex;justify-content:space-between;align-items:center;padding:16px clamp(20px,5vw,70px);background:rgba(5,8,12,.9);border-bottom:1px solid var(--line);backdrop-filter:blur(14px)}.topbar a{text-decoration:none;text-transform:uppercase;font-size:11px;font-weight:800;letter-spacing:.14em}.brand{font:18px Georgia,serif!important;text-transform:none!important;color:white!important}.hero{max-width:1120px;margin:50px auto 35px;padding:0 24px}.hero img{width:100%;aspect-ratio:16/9;object-fit:cover;border:1px solid rgba(126,210,255,.45);box-shadow:0 22px 70px rgba(0,0,0,.5)}.eyebrow{margin:28px 0 8px;color:var(--blue2);text-transform:uppercase;letter-spacing:.22em;font-size:11px;font-weight:800}.hero h1{margin:0;font:400 clamp(42px,6vw,72px)/1 Georgia,serif;letter-spacing:-.04em}.subtitle{max-width:760px;color:var(--muted);font-size:17px}.video{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:24px}.button{display:inline-flex;align-items:center;gap:10px;padding:12px 18px;background:var(--blue);color:#00131e;text-decoration:none;text-transform:uppercase;font-size:11px;font-weight:900;letter-spacing:.12em}.button.secondary{background:transparent;color:var(--blue2);border:1px solid rgba(126,210,255,.4)}article{max-width:980px;margin:0 auto 100px;padding:35px clamp(22px,5vw,70px);background:linear-gradient(145deg,rgba(15,25,35,.98),rgba(7,11,16,.98));border:1px solid var(--line)}h2{margin:50px 0 14px;padding-bottom:9px;border-bottom:1px solid var(--line);font:400 31px Georgia,serif;color:white}article>h2:first-child{margin-top:0}p,li{color:#bdcbd3}strong,code{color:white}code{padding:2px 5px;background:#05080c;border:1px solid var(--line)}ul,ol{padding-left:24px}li{margin:7px 0}table{width:100%;border-collapse:collapse;margin:22px 0 30px;font-size:14px}th{padding:13px;text-align:left;background:#132432;color:var(--blue2);border:1px solid #284150}td{padding:12px 13px;vertical-align:top;border:1px solid #263946;color:#b9c8d0}tr:nth-child(even) td{background:rgba(255,255,255,.025)}article img{display:block;width:100%;height:auto;margin:25px auto 8px;border:1px solid #385365;box-shadow:0 14px 35px rgba(0,0,0,.35)}article em{display:block;color:#8297a3;text-align:center;font-size:13px}.note{margin:25px 0;padding:18px;border-left:3px solid var(--gold);background:rgba(230,182,66,.07);color:#e9dfc4}.flow{padding:18px;background:#05080c;border:1px solid var(--line);color:#cfe7f5;font-family:Consolas,monospace;white-space:pre-line}footer{padding:36px;text-align:center;border-top:1px solid var(--line);color:#607580;font-size:11px;text-transform:uppercase;letter-spacing:.13em}@media(max-width:650px){.topbar{gap:14px}.brand{font-size:14px!important}.hero{margin-top:30px}article{border-left:0;border-right:0;padding:25px 18px}table{display:block;overflow-x:auto;white-space:normal}.video{align-items:stretch;flex-direction:column}.button{justify-content:center}}
+</style></head>
+<body><header class="topbar"><a class="brand" href="../index.html">Yangzhi Jianghu Workshop</a><a href="../index.html#projects">← Return to the forge</a></header>
+<section class="hero"><img src="../assets/kick-shoutout.webp" alt="Kick Video Shoutout Setup Guide"><p class="eyebrow">Workshop field manual</p><h1>Kick Video Shoutout Setup Guide</h1><p class="subtitle">A streamlined OBS and Streamer.bot guide for showing Kick creator clips and profile information during shoutouts.</p>
+<div class="video"><a class="button" href="https://youtu.be/BnZWMsR5sU0" target="_blank" rel="noopener">Watch the YouTube demonstration ▶</a><a class="button secondary" href="https://youtu.be/XykOkCA8NiI" target="_blank" rel="noopener">Earlier combined walkthrough ↗</a></div></section>
+<article><p>Corrected version based on your current working setup</p>
+<h2 id="credit">Credit</h2>
+<p>With thanks to VRFlad and the Streamer.bot / Kick.bot community for
+the original shoutout idea and workflow.</p>
+<h2 id="important-corrections-for-this-version">Important corrections
+for this version</h2>
+<ul>
+<li><p>The downloadable import file contains 2 Streamer.bot actions:
+Kick_Shoutout and Failedshoutout.</p></li>
+<li><p>For the OBS browser URL target, the source name used in the
+action should be only: profilePIC.</p></li>
+</ul>
+<h2 id="what-this-setup-does">1. What this setup does</h2>
+<p>When the Kick shoutout action is triggered, Streamer.bot grabs the
+target user information, updates the browser/media source, and displays
+the shoutout visual in OBS.</p>
+<p class="flow">!so username<br />
+-&gt; Kick_Shoutout runs<br />
+-&gt; gets target info<br />
+-&gt; updates profilePIC in OBS<br />
+-&gt; shows the shoutout scene/source<br />
+-&gt; if something fails, Failedshoutout handles the fallback</p>
+<h2 id="requirements">2. Requirements</h2>
+<ul>
+<li><p>OBS Studio</p></li>
+<li><p>Streamer.bot connected to OBS</p></li>
+<li><p>Kick.bot installed and working</p></li>
+<li><p>The shoutout HTML / browser setup already prepared</p></li>
+<li><p>The imported Streamer.bot action file that contains Kick_Shoutout
+and Failedshoutout</p></li>
+</ul>
+<h2 id="import-the-streamer.bot-actions">3. Import the Streamer.bot
+actions</h2>
+<p>Import the shoutout download file into Streamer.bot. After import,
+under your Kick ShoutOuts group, you should only see these two
+actions:</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Action name</strong></th>
+<th><strong>Purpose</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Kick_Shoutout</td>
+<td>Main shoutout action. This is the one you trigger.</td>
+</tr>
+<tr class="even">
+<td>Failedshoutout</td>
+<td>Fallback action if the shoutout cannot complete properly.</td>
+</tr>
+</tbody>
+</table>
+<p><img src="../assets/shoutout-streamerbot.webp" loading="lazy" alt="Tutorial screenshot" /></p>
+<p><em>Action list and trigger view. The corrected package only includes
+Kick_Shoutout and Failedshoutout.</em></p>
+<h2 id="obs-setup">4. OBS setup</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Item</strong></th>
+<th><strong>Name to use</strong></th>
+<th><strong>Notes</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Scene</td>
+<td>ShoutoutAlert</td>
+<td>The scene that contains your shoutout alert.</td>
+</tr>
+<tr class="even">
+<td>Profile Image</td>
+<td>profilePIC</td>
+<td>This displays the target’s profile picture.</td>
+</tr>
+<tr class="odd">
+<td><p>Browser Source</p>
+<p>Text Source</p></td>
+<td><p>ShoutOutClip</p>
+<p>ShoutText</p></td>
+<td><p>Loads the clip/player URL from Streamer.bot.</p>
+<p>Optional username/title text.</p></td>
+</tr>
+</tbody>
+</table>
+<p><img src="../assets/shoutout-obs.webp" loading="lazy" alt="Tutorial screenshot" /></p>
+<p><em>OBS example scene.</em></p>
+<h2 id="main-kick_shoutout-action">5. Main Kick_Shoutout action</h2>
+<p>Your main action uses one trigger and then runs through a short
+sequence. Keep it simple.</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Part</strong></th>
+<th><strong>What it does</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Trigger</td>
+<td>Custom Code Event: [Kick.bot] !so (!so)</td>
+</tr>
+<tr class="even">
+<td>Bot check</td>
+<td>Skips bot accounts if needed.</td>
+</tr>
+<tr class="odd">
+<td>Kick Add Target Info</td>
+<td>Reads the user you want to shout out.</td>
+</tr>
+<tr class="even">
+<td>OBS browser/source update</td>
+<td>Sets the URL or profile image target in OBS using ShoutoutAlert ::
+profilePIC.</td>
+</tr>
+<tr class="odd">
+<td>Show / delay / hide</td>
+<td>Displays the shoutout long enough to be seen.</td>
+</tr>
+<tr class="even">
+<td>Fallback</td>
+<td>If something goes wrong, call Failedshoutout.</td>
+</tr>
+</tbody>
+</table>
+<p>Kick_Shoutout<br />
+<br />
+Action (i break for bots (2))<br />
+Get temp global isBot -&gt; if true, break<br />
+Kick Add Target Info (%input0%)<br />
+OBS Studio Set Browser Source URL (ShoutoutAlert :: profilePIC)<br />
+Delay<br />
+Optional show / hide steps<br />
+If needed -&gt; Failedshoutout</p>
+<h2 id="exact-naming-note">6. Exact naming note</h2>
+<p>Streamer.bot and OBS source references must match exactly.</p>
+<h2 id="section"></h2>
+</article><footer>The digital workshop of BlueFacedBeast · Forged in the Jianghu</footer></body></html>
