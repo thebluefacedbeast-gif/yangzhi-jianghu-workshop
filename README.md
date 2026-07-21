@@ -8,6 +8,7 @@ The digital workshop of BlueFacedBeast: streaming tools, interactive overlays, t
 - BRB Clip Vote
 - Kick Shoutout System
 - Kick BRB Highlight Reel
+- Yangzhi Audiobook Forge
 
 This repository contains the GitHub Pages edition of the workshop. Project downloads and documentation are served from the main Workshop release.
 
