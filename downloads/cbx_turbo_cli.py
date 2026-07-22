@@ -46,21 +46,89 @@ if TurboClass is None:
     )
 
 
+SUPPORTED_TAGS = (
+    "[laugh]", "[chuckle]", "[sigh]", "[gasp]", "[cough]",
+    "[clear throat]", "[sniff]", "[groan]", "[shush]",
+)
+TAG_PATTERN = "(?:" + "|".join(re.escape(tag) for tag in SUPPORTED_TAGS) + ")"
+TAG_ONLY_RE = re.compile(rf"^(?:\s*{TAG_PATTERN}\s*)+$")
+
+
+def normalize_text(text: str) -> str:
+    """Normalize horizontal spacing without destroying poetic structure."""
+    text = text.replace("\r\n", "\n").replace("\r", "\n")
+    lines = [re.sub(r"[ \t\f\v]+", " ", line).strip() for line in text.split("\n")]
+    # Preserve stanza breaks, while reducing accidental runs of blank lines.
+    return re.sub(r"\n{3,}", "\n\n", "\n".join(lines)).strip()
+
+
+def _line_units(line: str) -> list[str]:
+    """Split one line at sentence endings and retain trailing reaction tags."""
+    pattern = re.compile(rf".*?[.!?。！？]+(?:\s*{TAG_PATTERN})*|.+$", re.IGNORECASE)
+    units = [m.group(0).strip() for m in pattern.finditer(line) if m.group(0).strip()]
+
+    # A tag-only fragment belongs to its neighboring spoken phrase.
+    bonded: list[str] = []
+    pending = ""
+    for unit in units:
+        if TAG_ONLY_RE.fullmatch(unit):
+            if bonded:
+                bonded[-1] += " " + unit
+            else:
+                pending = (pending + " " + unit).strip()
+        else:
+            bonded.append(((pending + " ") if pending else "") + unit)
+            pending = ""
+    if pending:
+        if bonded:
+            bonded[-1] += " " + pending
+        else:
+            bonded.append(pending)
+    return bonded
+
+
 def split_sentences(text: str, max_chars: int = 240) -> list[str]:
-    text = re.sub(r"\s+", " ", text).strip()
+    text = normalize_text(text)
     if not text:
         return []
-    # sentence-ish split including JP punctuation
-    parts = re.split(r"(?<=[\.\!\?\。\！\？])\s+", text)
-    parts = [p.strip() for p in parts if p.strip()]
+
+    # Each unit remembers the line/stanza separator that preceded it.
+    parts: list[tuple[str, str]] = []
+    pending_sep = ""
+    for line in text.split("\n"):
+        if not line:
+            pending_sep = "\n\n"
+            continue
+        units = _line_units(line)
+        for index, unit in enumerate(units):
+            sep = pending_sep if index == 0 else " "
+            parts.append((sep, unit))
+            pending_sep = "\n"
+
+    # Never leave a standalone reaction tag at a chunk boundary.
+    bonded_parts: list[tuple[str, str]] = []
+    leading_tags = ""
+    for sep, part in parts:
+        if TAG_ONLY_RE.fullmatch(part):
+            if bonded_parts:
+                old_sep, old_part = bonded_parts[-1]
+                bonded_parts[-1] = (old_sep, old_part + sep + part)
+            else:
+                leading_tags = (leading_tags + " " + part).strip()
+        else:
+            if leading_tags:
+                part = leading_tags + " " + part
+                leading_tags = ""
+            bonded_parts.append((sep, part))
+    parts = bonded_parts
 
     chunks: list[str] = []
     buf = ""
-    for p in parts:
+    for sep, p in parts:
         if not buf:
             buf = p
-        elif len(buf) + 1 + len(p) <= max_chars:
-            buf += " " + p
+        elif len(buf) + len(sep) + len(p) <= max_chars:
+            buf += sep + p
         else:
             chunks.append(buf)
             buf = p
@@ -154,6 +222,7 @@ def main():
     out_name = args.out_name or "cbx_turbo_out.wav"
     out_path = out_dir / out_name
     print(f"[info] out_dir={out_dir}  out_name={out_name}")
+    print("[info] supported Turbo tags: " + " ".join(SUPPORTED_TAGS))
 
     # load model
     device = args.device
@@ -165,7 +234,7 @@ def main():
     if args.split_text:
         chunks = split_sentences(text, max_chars=args.chunk_chars)
     else:
-        chunks = [text]
+        chunks = [normalize_text(text)]
 
     stitched = None
     sr_final = None
