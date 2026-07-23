@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import os
+import random
 import re
 import sys
 import inspect
@@ -165,6 +166,50 @@ def call_generate(model, **kwargs):
     return model.generate(**filtered)
 
 
+def seed_generators(seed: int) -> None:
+    """Seed every RNG Chatterbox/Torch may use before one chunk."""
+    # NumPy requires a 32-bit unsigned seed. Python and Torch accept the
+    # original integer, so preserve it there and only normalize for NumPy.
+    random.seed(seed)
+    np.random.seed(seed % (2**32))
+    torch.manual_seed(seed)
+
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed(seed)
+        torch.cuda.manual_seed_all(seed)
+
+    mps = getattr(torch.backends, "mps", None)
+    if mps is not None and mps.is_available():
+        torch.mps.manual_seed(seed)
+
+
+def filename_part(value: str, fallback: str, strip_extension: bool = False) -> str:
+    """Return a readable Windows-safe filename component."""
+    if value and strip_extension:
+        value = re.split(r"[/\\]", value)[-1]
+        value = value.rsplit(".", 1)[0] if "." in value else value
+    value = value or fallback
+    value = re.sub(r'[<>:"/\\|?*\x00-\x1f]+', "-", value)
+    value = re.sub(r"\s+", " ", value)
+    value = re.sub(r"\s*-\s*", " - ", value).strip(" .-_")
+    return value or fallback
+
+
+def metadata_output_name(args: argparse.Namespace) -> str:
+    """Build [text][reference][style][speed][seed].wav."""
+    text_name = filename_part(args.text_file or "", "text", strip_extension=True)
+    ref_name = filename_part(args.ref_wav or "", "no-ref", strip_extension=True)
+    style_name = filename_part(args.style or "", "Custom")
+    speed_name = filename_part(f"{args.speed_factor:g}", "1")
+    seed_name = filename_part(
+        "random" if args.seed is None else str(args.seed), "random"
+    )
+    return (
+        f"[{text_name}][{ref_name}][{style_name}]"
+        f"[{speed_name}][{seed_name}].wav"
+    )
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--text", default=None)
@@ -179,6 +224,7 @@ def main():
     ap.add_argument("--seed", type=int, default=None)
     ap.add_argument("--speed_factor", type=float, default=1.0)
     ap.add_argument("--language", default="en")
+    ap.add_argument("--style", default="Custom")
 
     # chunking
     ap.add_argument("--split_text", action="store_true")
@@ -219,7 +265,7 @@ def main():
 
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
-    out_name = args.out_name or "cbx_turbo_out.wav"
+    out_name = args.out_name or metadata_output_name(args)
     out_path = out_dir / out_name
     print(f"[info] out_dir={out_dir}  out_name={out_name}")
     print("[info] supported Turbo tags: " + " ".join(SUPPORTED_TAGS))
@@ -242,11 +288,15 @@ def main():
     for i, ch in enumerate(chunks, start=1):
         print(f"[gen] chunk {i}/{len(chunks)} ({len(ch)} chars)")
 
-        # base_seed + chunk_index logic
+        # Use one fixed seed for consistent narration across every chunk.
         if args.seed is None:
             seed_i = None
         else:
-            seed_i = int(args.seed) + (i - 1)
+            seed_i = int(args.seed)
+
+        if seed_i is not None:
+            seed_generators(seed_i)
+            print(f"[seed] chunk {i}/{len(chunks)} = {seed_i}")
 
         wav = call_generate(
             model,
