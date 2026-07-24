@@ -2,9 +2,6 @@ name: Publish Workshop Releases
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - ".github/workflows/publish-workshop-releases.yml"
 
 permissions:
   contents: write
@@ -16,15 +13,17 @@ jobs:
       GH_TOKEN: ${{ github.token }}
       REPO: ${{ github.repository }}
     steps:
-      - name: Download current workshop packages
+      - name: Check out release packages
+        uses: actions/checkout@v4
+
+      - name: Verify release packages
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p release-assets
-          curl --fail --location --retry 3             "https://yangzhi-jianghu-workshop.bluefacedbeast-yangzhi.chatgpt.site/downloads/yangzhi-game-stream-auto-editor.zip"             --output "release-assets/Yangzhi-Game-Stream-Auto-Editor-v2.0.zip"
-          curl --fail --location --retry 3             "https://yangzhi-jianghu-workshop.bluefacedbeast-yangzhi.chatgpt.site/downloads/brb-clip-vote.zip"             --output "release-assets/BRB-Clip-Vote-v1.0.zip"
-          curl --fail --location --retry 3             "https://yangzhi-jianghu-workshop.bluefacedbeast-yangzhi.chatgpt.site/downloads/kick-shoutout.zip"             --output "release-assets/Kick-Video-Shoutout-v1.0.zip"
-          curl --fail --location --retry 3             "https://yangzhi-jianghu-workshop.bluefacedbeast-yangzhi.chatgpt.site/downloads/kick-brb-highlight-reel.zip"             --output "release-assets/Kick-BRB-Highlight-Reel-v2.zip"
+          test -s "release-assets/Yangzhi-Game-Stream-Auto-Editor-v2.0.zip"
+          test -s "release-assets/BRB-Clip-Vote-v1.0.zip"
+          test -s "release-assets/Kick-Video-Shoutout-v1.0.zip"
+          test -s "release-assets/Kick-BRB-Highlight-Reel-v2.zip"
 
       - name: Publish tracked release assets
         shell: bash
