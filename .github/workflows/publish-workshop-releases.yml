@@ -14,7 +14,7 @@ jobs:
       REPO: ${{ github.repository }}
     steps:
       - name: Check out release packages
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Verify release packages
         shell: bash
@@ -23,7 +23,8 @@ jobs:
           test -s "release-assets/Yangzhi-Game-Stream-Auto-Editor-v2.0.zip"
           test -s "release-assets/BRB-Clip-Vote-v1.0.zip"
           test -s "release-assets/Kick-Video-Shoutout-v1.0.zip"
-          test -s "release-assets/Kick-BRB-Highlight-Reel-v2.zip"\n          test -s "release-assets/Yangzhi-Audiobook-Forge-v1.2.zip"
+          test -s "release-assets/Kick-BRB-Highlight-Reel-v2.zip"
+          test -s "release-assets/Yangzhi-Audiobook-Forge-v1.2.zip"
 
       - name: Publish tracked release assets
         shell: bash
@@ -39,14 +40,12 @@ jobs:
             if gh release view "$tag" --repo "$REPO" >/dev/null 2>&1; then
               gh release upload "$tag" "$asset" --repo "$REPO" --clobber
             else
-              gh release create "$tag" "$asset"                 --repo "$REPO"                 --title "$title"                 --notes "$notes"
+              gh release create "$tag" "$asset" --repo "$REPO" --title "$title" --notes "$notes"
             fi
           }
 
-          publish_release             "auto-editor-v2.0"             "Yangzhi Game Stream Auto-Editor v2.0"             "Windows front end for fast game-stream cleanup, chapter splitting, speed adjustment, and upload-ready exports."             "release-assets/Yangzhi-Game-Stream-Auto-Editor-v2.0.zip"
-
-          publish_release             "brb-clip-vote-v1.0"             "BRB Clip Vote v1.0"             "Interactive OBS and Streamer.bot overlay that lets chat vote for the next clip."             "release-assets/BRB-Clip-Vote-v1.0.zip"
-
-          publish_release             "kick-video-shoutout-v1.0"             "Kick Video Shoutout v1.0"             "Streamer.bot and OBS toolkit for Kick creator clip shoutouts with a profile-card fallback."             "release-assets/Kick-Video-Shoutout-v1.0.zip"
-
-          publish_release             "kick-brb-highlight-reel-v2"             "Kick BRB Highlight Reel v2"             "OBS and Streamer.bot system for automatically playing Kick highlights during BRB scenes."             "release-assets/Kick-BRB-Highlight-Reel-v2.zip"\n\n          publish_release "audiobook-forge-v1.2" "Yangzhi Audiobook Forge v1.2" "Native Windows front end for turning poetry and prose into joined voice-cloned audiobook WAVs through Chatterbox Turbo." "release-assets/Yangzhi-Audiobook-Forge-v1.2.zip"
+          publish_release "auto-editor-v2.0" "Yangzhi Game Stream Auto-Editor v2.0" "Windows front end for fast game-stream cleanup, chapter splitting, speed adjustment, and upload-ready exports." "release-assets/Yangzhi-Game-Stream-Auto-Editor-v2.0.zip"
+          publish_release "brb-clip-vote-v1.0" "BRB Clip Vote v1.0" "Interactive OBS and Streamer.bot overlay that lets chat vote for the next clip." "release-assets/BRB-Clip-Vote-v1.0.zip"
+          publish_release "kick-video-shoutout-v1.0" "Kick Video Shoutout v1.0" "Streamer.bot and OBS toolkit for Kick creator clip shoutouts with a profile-card fallback." "release-assets/Kick-Video-Shoutout-v1.0.zip"
+          publish_release "kick-brb-highlight-reel-v2" "Kick BRB Highlight Reel v2" "OBS and Streamer.bot system for automatically playing Kick highlights during BRB scenes." "release-assets/Kick-BRB-Highlight-Reel-v2.zip"
+          publish_release "audiobook-forge-v1.2" "Yangzhi Audiobook Forge v1.2" "Native Windows front end for turning poetry and prose into joined voice-cloned audiobook WAVs through Chatterbox Turbo." "release-assets/Yangzhi-Audiobook-Forge-v1.2.zip"
