@@ -23,7 +23,7 @@ jobs:
           test -s "release-assets/Yangzhi-Game-Stream-Auto-Editor-v2.0.zip"
           test -s "release-assets/BRB-Clip-Vote-v1.0.zip"
           test -s "release-assets/Kick-Video-Shoutout-v1.0.zip"
-          test -s "release-assets/Kick-BRB-Highlight-Reel-v2.zip"
+          test -s "release-assets/Kick-BRB-Highlight-Reel-v2.zip"\n          test -s "release-assets/Yangzhi-Audiobook-Forge-v1.2.zip"
 
       - name: Publish tracked release assets
         shell: bash
@@ -49,4 +49,4 @@ jobs:
 
           publish_release             "kick-video-shoutout-v1.0"             "Kick Video Shoutout v1.0"             "Streamer.bot and OBS toolkit for Kick creator clip shoutouts with a profile-card fallback."             "release-assets/Kick-Video-Shoutout-v1.0.zip"
 
-          publish_release             "kick-brb-highlight-reel-v2"             "Kick BRB Highlight Reel v2"             "OBS and Streamer.bot system for automatically playing Kick highlights during BRB scenes."             "release-assets/Kick-BRB-Highlight-Reel-v2.zip"
+          publish_release             "kick-brb-highlight-reel-v2"             "Kick BRB Highlight Reel v2"             "OBS and Streamer.bot system for automatically playing Kick highlights during BRB scenes."             "release-assets/Kick-BRB-Highlight-Reel-v2.zip"\n\n          publish_release "audiobook-forge-v1.2" "Yangzhi Audiobook Forge v1.2" "Native Windows front end for turning poetry and prose into joined voice-cloned audiobook WAVs through Chatterbox Turbo." "release-assets/Yangzhi-Audiobook-Forge-v1.2.zip"
