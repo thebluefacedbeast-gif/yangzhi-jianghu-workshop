@@ -1,0 +1,107 @@
+name: Monitor Heart Dao Slideshow Build
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/heart-dao-live-status.yml"
+
+permissions:
+  actions: read
+  contents: write
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    env:
+      GH_TOKEN: ${{ github.token }}
+      TARGET_SHA: 62d2ae90cdbd8a6892ee5ce2004e81f58bcb8024
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Poll and record progress
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p build-status
+          for attempt in $(seq 1 120); do
+            runs_json=$(gh api \
+              -H "Accept: application/vnd.github+json" \
+              "repos/${GITHUB_REPOSITORY}/actions/workflows/heart-dao-slideshows.yml/runs?branch=main&per_page=20")
+            run_json=$(printf '%s' "$runs_json" | jq -c --arg sha "$TARGET_SHA" \
+              '[.workflow_runs[] | select(.head_sha == $sha)][0] // empty')
+
+            if [ -z "$run_json" ]; then
+              python - <<'PY'
+          import json, os
+          from pathlib import Path
+          Path("build-status/heart-dao-live.json").write_text(json.dumps({
+              "head_sha": os.environ["TARGET_SHA"],
+              "status": "not_found_yet"
+          }, indent=2) + "\n", encoding="utf-8")
+          PY
+            else
+              run_id=$(printf '%s' "$run_json" | jq -r '.id')
+              jobs_json=$(gh api \
+                -H "Accept: application/vnd.github+json" \
+                "repos/${GITHUB_REPOSITORY}/actions/runs/${run_id}/jobs?per_page=100")
+              RUN_JSON="$run_json" JOBS_JSON="$jobs_json" python - <<'PY'
+          import json, os
+          from collections import Counter
+          from pathlib import Path
+          run = json.loads(os.environ["RUN_JSON"])
+          jobs = json.loads(os.environ["JOBS_JSON"]).get("jobs", [])
+          statuses = Counter(j.get("status") for j in jobs)
+          conclusions = Counter(j.get("conclusion") for j in jobs if j.get("conclusion"))
+          data = {
+              "run_id": run["id"],
+              "run_number": run["run_number"],
+              "head_sha": run["head_sha"],
+              "status": run["status"],
+              "conclusion": run.get("conclusion"),
+              "html_url": run["html_url"],
+              "created_at": run["created_at"],
+              "updated_at": run["updated_at"],
+              "jobs_total": len(jobs),
+              "job_status_counts": dict(statuses),
+              "job_conclusion_counts": dict(conclusions),
+              "jobs": [
+                  {
+                      "name": j.get("name"),
+                      "status": j.get("status"),
+                      "conclusion": j.get("conclusion"),
+                      "started_at": j.get("started_at"),
+                      "completed_at": j.get("completed_at"),
+                  }
+                  for j in jobs
+              ],
+          }
+          Path("build-status/heart-dao-live.json").write_text(
+              json.dumps(data, indent=2) + "\n", encoding="utf-8"
+          )
+          PY
+            fi
+
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git pull --rebase origin main
+            git add build-status/heart-dao-live.json
+            if ! git diff --cached --quiet; then
+              git commit -m "Update Heart Dao slideshow build progress"
+              git push origin main
+            fi
+
+            current_status=$(python - <<'PY'
+          import json
+          from pathlib import Path
+          print(json.loads(Path("build-status/heart-dao-live.json").read_text())["status"])
+          PY
+            )
+            if [ "$current_status" = "completed" ]; then
+              exit 0
+            fi
+            sleep 120
+          done
+          exit 1
