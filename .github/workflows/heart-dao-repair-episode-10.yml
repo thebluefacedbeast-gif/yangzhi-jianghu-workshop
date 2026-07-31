@@ -1,0 +1,86 @@
+name: Repair Heart Dao Episode 10
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/heart-dao-repair-episode-10.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install FFmpeg and Python dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+          python -m pip install --upgrade gdown opencv-python-headless numpy
+
+      - name: Download Episode 10 source folder
+        run: |
+          mkdir -p source outputs
+          gdown --folder "https://drive.google.com/drive/folders/1cO1pXxG35cScm_qD43PJ8VUsjPQ2SSFk" --output source
+
+      - name: Replace Windows shortcuts with their actual images
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf "source/images 1"
+          mkdir -p "source/images 1"
+
+          while IFS='|' read -r file_id file_name; do
+            [ -n "$file_id" ] || continue
+            echo "Downloading ${file_name}"
+            gdown "https://drive.google.com/uc?id=${file_id}" --output "source/images 1/${file_name}"
+          done <<'EOF'
+          17MUvxd_RuRRC24h7cFM2_ei2zRsp1bX7|01_Episode_Ten_Purpose_and_the_Worthy_Flame_Title.png
+          1Cnw0pxi8-FQcH1Mv3fpMIqG8JSZyp6BZ|02_Busy_Without_Becoming_Alive.png
+          167jaMuSohIaJvg6ZltJoUpXSXaKI5ZT2|03_Purpose_Through_Repeated_Acts_of_Care.png
+          1aEvTDtWbCUzDk8iwOp-YE9XBigj0_tw6|04_Importance_and_Alignment.png
+          1T58FAcPTkLjp4UI7WKl0c6KPWWg-ogoN|05_The_Candle_and_the_Sun.png
+          1P5nZ1ONR7S5ahNNSwb7iJPMO9Vrhp-Mi|06_Desire_Joins_Service_Discipline_and_Truth.png
+          15KhqEnNC5-J0OkfPHGAtETFyk1olDbFA|08_Purpose_Is_Not_Measured_by_Scale.png
+          1mmLPT_LJviLftLVytybL0Aivqu_pFZvJ|10_Survival_Rest_and_Healing_Are_Worthy.png
+          1fH0J91hFAC4AP2fJwjFMfTZW1AJ1UVaq|11_One_Small_Flame_Through_Winter.png
+          1rql__v3vNrcV8c19jxRRqXewVhD3d2Al|12_The_Three_Gates_of_Postponed_Life.png
+          1HS-Wn0hHIP6Vi6AiUFgBgZdSBMhglwj6|13_The_Craftsperson_Teacher_and_Warrior_Rest.png
+          1EGbSFsR-Nqhk99QBaDlH3ffgf7yItOjM|14_Rest_Friendship_Play_and_Wonder.png
+          1lvFeIU_9iTf3qXCDKL7bzsr5AZSh3RFz|15_The_Guiding_Flame_and_the_Devouring_Fire.png
+          1tuMS4T4m3iLkK5-X-V5ckiDd6kfY8AXo|16_How_to_Recognize_a_Worthy_Flame.png
+          1Pr1BFeHe184tLonOxEvZ-J7FAcEjnsJh|17_What_You_Tend_When_the_Room_Is_Empty.png
+          1i0kDEcQZ2j1QCX0sDv9Lr90bceXmUdvZ|18_Practice_Find_Your_Worthy_Flame.png
+          1vcI0IOBl7NsTVeZamWN5tMhUk8MVzSCa|19_Closing_Verse_The_Ember_Is_Still_Fire.png
+          1Ux0RWLxBX2Z_l0_YDxVj0-2DvyQHHYhG|20_Episode_Eleven_Preview_Become_the_Hearth.png
+          EOF
+
+          count=$(find "source/images 1" -maxdepth 1 -type f -iname '*.png' | wc -l)
+          echo "Actual secondary image count: $count"
+          test "$count" -eq 18
+
+      - name: Render repaired silent slideshow
+        run: |
+          python tools/heart_dao_slideshow.py \
+            --source source \
+            --episode-name "10_Purpose_and_the_Worthy_Flame" \
+            --output outputs
+
+      - name: Upload repaired Episode 10 ZIP
+        uses: actions/upload-artifact@v4
+        with:
+          name: Heart_Dao_10_Purpose_and_the_Worthy_Flame
+          path: outputs/10_Purpose_and_the_Worthy_Flame_Silent_Slideshow.zip
+          if-no-files-found: error
+          retention-days: 14
+          compression-level: 0
