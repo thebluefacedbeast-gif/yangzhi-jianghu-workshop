@@ -12,7 +12,7 @@ permissions:
 
 concurrency:
   group: heart-dao-slideshows
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   render:
@@ -59,7 +59,7 @@ jobs:
           - episode: 14_Part_2_The_Current_and_the_Great_Mystery
             folder_id: 1tWiFgyuqQVut54hi_tD5V_FMO8NzFj60
           - episode: 15_Part_1_The_Seasons_Within_Us
-            folder_id: 1iv8RMMHmSDhjUX8Ox8QgnWPXewATGPSj
+            folder_id: 1iv8RMMHmSDhjUX8QgnWPXewATGPSj
           - episode: 15_Part_2_Until_We_Meet_Again
             folder_id: 1ttuS_mD6erADUGsQ3k0CDzwWopz8VEXZ
 
