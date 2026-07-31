@@ -1,11 +1,11 @@
 {
   "workflow": "Build Heart Dao Silent Slideshows",
-  "run_id": 30593296883,
-  "run_number": 2,
+  "run_id": 30593341535,
+  "run_number": 3,
   "status": "completed",
-  "conclusion": "cancelled",
-  "html_url": "https://github.com/thebluefacedbeast-gif/yangzhi-jianghu-workshop/actions/runs/30593296883",
-  "head_sha": "f78520e17353a68d6fcaed63c13275b21764e81a",
-  "created_at": "2026-07-31T00:21:16Z",
-  "updated_at": "2026-07-31T00:22:18Z"
+  "conclusion": "failure",
+  "html_url": "https://github.com/thebluefacedbeast-gif/yangzhi-jianghu-workshop/actions/runs/30593341535",
+  "head_sha": "62d2ae90cdbd8a6892ee5ce2004e81f58bcb8024",
+  "created_at": "2026-07-31T00:22:13Z",
+  "updated_at": "2026-07-31T00:25:42Z"
 }
