@@ -9,12 +9,12 @@
   "updated_at": "2026-07-31T00:28:51Z",
   "jobs_total": 19,
   "job_status_counts": {
-    "completed": 10,
+    "completed": 12,
     "in_progress": 5,
-    "queued": 4
+    "queued": 2
   },
   "job_conclusion_counts": {
-    "success": 9,
+    "success": 11,
     "failure": 1
   },
   "jobs": [
@@ -34,10 +34,10 @@
     },
     {
       "name": "Render 12_Communion_The_Living_Heart",
-      "status": "in_progress",
-      "conclusion": null,
+      "status": "completed",
+      "conclusion": "success",
       "started_at": "2026-07-31T00:40:47Z",
-      "completed_at": null
+      "completed_at": "2026-07-31T00:45:15Z"
     },
     {
       "name": "Render 13_Part_1_The_Shape_of_Integrity",
@@ -62,10 +62,10 @@
     },
     {
       "name": "Render 11_Become_the_Hearth",
-      "status": "in_progress",
-      "conclusion": null,
+      "status": "completed",
+      "conclusion": "success",
       "started_at": "2026-07-31T00:37:27Z",
-      "completed_at": null
+      "completed_at": "2026-07-31T00:45:46Z"
     },
     {
       "name": "Render 07_Compassion",
@@ -132,16 +132,16 @@
     },
     {
       "name": "Render 14_Part_1_Intention_and_the_Living_Word",
-      "status": "queued",
+      "status": "in_progress",
       "conclusion": null,
-      "started_at": "2026-07-31T00:28:51Z",
+      "started_at": "2026-07-31T00:45:16Z",
       "completed_at": null
     },
     {
       "name": "Render 14_Part_2_The_Current_and_the_Great_Mystery",
-      "status": "queued",
+      "status": "in_progress",
       "conclusion": null,
-      "started_at": "2026-07-31T00:28:51Z",
+      "started_at": "2026-07-31T00:45:48Z",
       "completed_at": null
     },
     {
