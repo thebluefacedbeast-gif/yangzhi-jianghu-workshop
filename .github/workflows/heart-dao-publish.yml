@@ -1,0 +1,111 @@
+name: Publish Heart Dao Slideshow ZIPs
+
+on:
+  workflow_run:
+    workflows:
+      - Repair Heart Dao Episode 10
+    types:
+      - completed
+
+permissions:
+  actions: read
+  contents: write
+
+jobs:
+  publish:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    env:
+      GH_TOKEN: ${{ github.token }}
+      MAIN_HEAD_SHA: e885659d0adbd373d053f706bee71b4e4e2180e1
+      REPAIR_RUN_ID: ${{ github.event.workflow_run.id }}
+      RELEASE_TAG: heart-dao-slideshows-2026-07-31-r1
+    steps:
+      - name: Wait for the 18 unaffected episode renders
+        shell: bash
+        run: |
+          set -euo pipefail
+          main_run_id=""
+          for attempt in $(seq 1 120); do
+            runs_json=$(gh api \
+              -H "Accept: application/vnd.github+json" \
+              "repos/${GITHUB_REPOSITORY}/actions/workflows/heart-dao-slideshows.yml/runs?branch=main&per_page=30")
+            run_json=$(printf '%s' "$runs_json" | jq -c --arg sha "$MAIN_HEAD_SHA" \
+              '[.workflow_runs[] | select(.head_sha == $sha)][0] // empty')
+            if [ -n "$run_json" ]; then
+              main_run_id=$(printf '%s' "$run_json" | jq -r '.id')
+              status=$(printf '%s' "$run_json" | jq -r '.status')
+              conclusion=$(printf '%s' "$run_json" | jq -r '.conclusion // ""')
+              echo "Main run ${main_run_id}: ${status} ${conclusion}"
+              if [ "$status" = "completed" ]; then
+                break
+              fi
+            else
+              echo "Main run not found yet."
+            fi
+            sleep 120
+          done
+          test -n "$main_run_id"
+          status=$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${main_run_id}" --jq '.status')
+          test "$status" = "completed"
+          echo "MAIN_RUN_ID=${main_run_id}" >> "$GITHUB_ENV"
+
+      - name: Download successful episode artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifact-zips release-assets
+
+          download_run_artifacts() {
+            local run_id="$1"
+            local label="$2"
+            gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${run_id}/artifacts?per_page=100" \
+              --jq '.artifacts[] | select(.expired == false) | [.id,.name] | @tsv' |
+            while IFS=$'\t' read -r artifact_id artifact_name; do
+              [ -n "$artifact_id" ] || continue
+              echo "Downloading ${label}: ${artifact_name}"
+              gh api \
+                -H "Accept: application/vnd.github+json" \
+                "repos/${GITHUB_REPOSITORY}/actions/artifacts/${artifact_id}/zip" \
+                > "artifact-zips/${artifact_id}.zip"
+              unzip -oq "artifact-zips/${artifact_id}.zip" -d release-assets
+            done
+          }
+
+          download_run_artifacts "$MAIN_RUN_ID" "main"
+          download_run_artifacts "$REPAIR_RUN_ID" "repair"
+
+          find release-assets -maxdepth 1 -type f -name '*_Silent_Slideshow.zip' -print | sort
+          count=$(find release-assets -maxdepth 1 -type f -name '*_Silent_Slideshow.zip' | wc -l)
+          echo "Final ZIP count: $count"
+          test "$count" -eq 19
+
+      - name: Publish GitHub Release
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > release-notes.txt <<'EOF'
+          Complete silent slideshow set for The Heart Dao: Episodes 1–12 and every part of Episodes 13–15.
+
+          Each episode or part is supplied as its own ZIP containing:
+          - one silent 1920×1080 MP4 matched to the corresponding WAV duration
+          - one JSON production manifest
+
+          Production rules:
+          - every valid source image from both `images` and `images 1` is used
+          - `images` remains the primary visual sequence
+          - `images 1` is interleaved as secondary material
+          - the unwanted “redone pack...” footer is removed when detected
+          - subtle slow movement and soft fade transitions
+          - no audio stream
+          EOF
+
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            gh release upload "$RELEASE_TAG" release-assets/*_Silent_Slideshow.zip --clobber
+          else
+            gh release create "$RELEASE_TAG" release-assets/*_Silent_Slideshow.zip \
+              --title "The Heart Dao — Silent Episode Slideshows" \
+              --notes-file release-notes.txt \
+              --target main
+          fi
