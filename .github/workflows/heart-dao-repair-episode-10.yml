@@ -1,5 +1,6 @@
 name: Repair Heart Dao Episode 10
 
+# Episode 10's secondary folder contains Windows shortcuts; this job resolves them.
 on:
   workflow_dispatch:
   push:
