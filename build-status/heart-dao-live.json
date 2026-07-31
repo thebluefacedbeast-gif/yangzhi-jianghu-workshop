@@ -9,24 +9,27 @@
   "updated_at": "2026-07-31T00:28:51Z",
   "jobs_total": 19,
   "job_status_counts": {
-    "in_progress": 5,
-    "queued": 14
+    "completed": 5,
+    "queued": 9,
+    "in_progress": 5
   },
-  "job_conclusion_counts": {},
+  "job_conclusion_counts": {
+    "success": 5
+  },
   "jobs": [
     {
       "name": "Render 03_Seeing_Reality_Clearly",
-      "status": "in_progress",
-      "conclusion": null,
+      "status": "completed",
+      "conclusion": "success",
       "started_at": "2026-07-31T00:28:59Z",
-      "completed_at": null
+      "completed_at": "2026-07-31T00:34:27Z"
     },
     {
       "name": "Render 01_The_Invitation",
-      "status": "in_progress",
-      "conclusion": null,
+      "status": "completed",
+      "conclusion": "success",
       "started_at": "2026-07-31T00:28:53Z",
-      "completed_at": null
+      "completed_at": "2026-07-31T00:34:48Z"
     },
     {
       "name": "Render 12_Communion_The_Living_Heart",
@@ -44,17 +47,17 @@
     },
     {
       "name": "Render 04_Freedom_and_Desire",
-      "status": "in_progress",
-      "conclusion": null,
+      "status": "completed",
+      "conclusion": "success",
       "started_at": "2026-07-31T00:28:53Z",
-      "completed_at": null
+      "completed_at": "2026-07-31T00:35:02Z"
     },
     {
       "name": "Render 02_The_Sleeping_Heart",
-      "status": "in_progress",
-      "conclusion": null,
+      "status": "completed",
+      "conclusion": "success",
       "started_at": "2026-07-31T00:28:54Z",
-      "completed_at": null
+      "completed_at": "2026-07-31T00:35:01Z"
     },
     {
       "name": "Render 11_Become_the_Hearth",
@@ -65,38 +68,38 @@
     },
     {
       "name": "Render 07_Compassion",
-      "status": "queued",
+      "status": "in_progress",
       "conclusion": null,
-      "started_at": "2026-07-31T00:28:51Z",
+      "started_at": "2026-07-31T00:34:49Z",
       "completed_at": null
     },
     {
       "name": "Render 08_Love_Without_Possession",
-      "status": "queued",
+      "status": "in_progress",
       "conclusion": null,
-      "started_at": "2026-07-31T00:28:51Z",
+      "started_at": "2026-07-31T00:35:03Z",
       "completed_at": null
     },
     {
       "name": "Render 09_Joy_and_the_Ordinary_Light",
-      "status": "queued",
+      "status": "in_progress",
       "conclusion": null,
-      "started_at": "2026-07-31T00:28:51Z",
+      "started_at": "2026-07-31T00:35:04Z",
       "completed_at": null
     },
     {
       "name": "Render 10_Purpose_and_the_Worthy_Flame",
-      "status": "queued",
+      "status": "in_progress",
       "conclusion": null,
-      "started_at": "2026-07-31T00:28:51Z",
+      "started_at": "2026-07-31T00:35:26Z",
       "completed_at": null
     },
     {
       "name": "Render 05_The_First_Cultivation",
-      "status": "in_progress",
-      "conclusion": null,
+      "status": "completed",
+      "conclusion": "success",
       "started_at": "2026-07-31T00:28:53Z",
-      "completed_at": null
+      "completed_at": "2026-07-31T00:35:16Z"
     },
     {
       "name": "Render 13_Part_3_The_Unbroken_Sword",
@@ -114,9 +117,9 @@
     },
     {
       "name": "Render 06_The_Five_Elements_of_the_Heart",
-      "status": "queued",
+      "status": "in_progress",
       "conclusion": null,
-      "started_at": "2026-07-31T00:28:51Z",
+      "started_at": "2026-07-31T00:34:29Z",
       "completed_at": null
     },
     {
