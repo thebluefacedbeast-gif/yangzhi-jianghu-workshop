@@ -1,0 +1,150 @@
+name: Build Heart Dao Silent Slideshows
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/heart-dao-slideshows.yml"
+      - "tools/heart_dao_slideshow.py"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: heart-dao-slideshows
+  cancel-in-progress: false
+
+jobs:
+  render:
+    name: Render ${{ matrix.episode }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      max-parallel: 5
+      matrix:
+        include:
+          - episode: 01_The_Invitation
+            folder_id: 1KGJEDD3myhybjqXWvXkQ4OojsYKP8mZu
+          - episode: 02_The_Sleeping_Heart
+            folder_id: 1ieo_VSZwXf_su6lEuGKnkTf2ZtHxIPh-
+          - episode: 03_Seeing_Reality_Clearly
+            folder_id: 1VXbfAQ7EtiMITZBYsoNzJYKPp0YtglSD
+          - episode: 04_Freedom_and_Desire
+            folder_id: 1UQJB-MX21_5ijixUf9CCujQzg_wxWGRz
+          - episode: 05_The_First_Cultivation
+            folder_id: 1vYh8IThVdLA9lHjeXZ356vgPYO09MteF
+          - episode: 06_The_Five_Elements_of_the_Heart
+            folder_id: 1_8m5p-1roa4WuDDXfUin4vUpvG26cqqG
+          - episode: 07_Compassion
+            folder_id: 13HglYJQM6fl4dXFord2p4tzFJXmoQAb1
+          - episode: 08_Love_Without_Possession
+            folder_id: 1p2d7xvPFTsCfJjh7t8_Si6xKyfZDtGYu
+          - episode: 09_Joy_and_the_Ordinary_Light
+            folder_id: 1qdWAOukopE1UGuna2fSekvOSHc5zn024
+          - episode: 10_Purpose_and_the_Worthy_Flame
+            folder_id: 1cO1pXxG35cScm_qD43PJ8VUsjPQ2SSFk
+          - episode: 11_Become_the_Hearth
+            folder_id: 1yQ64bbkbHiShgMpnXgCaDpC17uKUchxk
+          - episode: 12_Communion_The_Living_Heart
+            folder_id: 13K6oee9YNxkKHlImyQVunwTGy-4gzH-N
+          - episode: 13_Part_1_The_Shape_of_Integrity
+            folder_id: 1dYOsClzc0Ek_L2VX8fNS9dTXC_BppxLH
+          - episode: 13_Part_2_The_Forge
+            folder_id: 1MV6xyUB_YeNZ4tYKMLxJsNRo2mUWZt-h
+          - episode: 13_Part_3_The_Unbroken_Sword
+            folder_id: 1OBUGff1F4HTWDTOqWVlDX5NVrm34Y9Im
+          - episode: 14_Part_1_Intention_and_the_Living_Word
+            folder_id: 1iKlZUMXNi26AqDzJRFaZVL0wTPxI9cDU
+          - episode: 14_Part_2_The_Current_and_the_Great_Mystery
+            folder_id: 1tWiFgyuqQVut54hi_tD5V_FMO8NzFj60
+          - episode: 15_Part_1_The_Seasons_Within_Us
+            folder_id: 1iv8RMMHmSDhjUX8Ox8QgnWPXewATGPSj
+          - episode: 15_Part_2_Until_We_Meet_Again
+            folder_id: 1ttuS_mD6erADUGsQ3k0CDzwWopz8VEXZ
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install FFmpeg
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+
+      - name: Install Python dependencies
+        run: python -m pip install --upgrade gdown opencv-python-headless numpy
+
+      - name: Download episode sources from Google Drive
+        run: |
+          mkdir -p source outputs
+          gdown --folder "https://drive.google.com/drive/folders/${{ matrix.folder_id }}" --output source --remaining-ok
+
+      - name: Render silent slideshow
+        run: |
+          python tools/heart_dao_slideshow.py \
+            --source source \
+            --episode-name "${{ matrix.episode }}" \
+            --output outputs
+
+      - name: Upload episode ZIP
+        uses: actions/upload-artifact@v4
+        with:
+          name: Heart_Dao_${{ matrix.episode }}
+          path: outputs/${{ matrix.episode }}_Silent_Slideshow.zip
+          if-no-files-found: error
+          retention-days: 14
+          compression-level: 0
+
+  release:
+    name: Publish downloadable ZIPs
+    needs: render
+    if: ${{ always() && needs.render.result == 'success' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download all episode artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: Heart_Dao_*
+          path: release-assets
+          merge-multiple: true
+
+      - name: Verify complete episode set
+        shell: bash
+        run: |
+          set -euo pipefail
+          count=$(find release-assets -maxdepth 1 -type f -name '*_Silent_Slideshow.zip' | wc -l)
+          echo "ZIP count: $count"
+          test "$count" -eq 19
+          ls -lh release-assets
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: heart-dao-slideshows-2026-07-31-r1
+          name: The Heart Dao — Silent Episode Slideshows
+          body: |
+            Complete silent slideshow set for The Heart Dao: Episodes 1–12 and every part of Episodes 13–15.
+
+            Each ZIP contains:
+            - one silent 1920×1080 MP4 matched to the corresponding WAV duration
+            - one JSON production manifest
+
+            Production rules:
+            - every image from both `images` and `images 1` is used
+            - `images` remains the primary visual sequence
+            - `images 1` is interleaved as secondary material
+            - unwanted “redone pack...” footer text is removed when detected
+            - subtle slow movement and soft fade transitions
+            - no audio stream
+          files: release-assets/*_Silent_Slideshow.zip
+          fail_on_unmatched_files: true
+          overwrite_files: true
