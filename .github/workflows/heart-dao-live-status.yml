@@ -25,8 +25,14 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p build-status
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
           for attempt in $(seq 1 120); do
+            git fetch origin main
+            git reset --hard origin/main
+            mkdir -p build-status
+
             runs_json=$(gh api \
               -H "Accept: application/vnd.github+json" \
               "repos/${GITHUB_REPOSITORY}/actions/workflows/heart-dao-slideshows.yml/runs?branch=main&per_page=20")
@@ -84,9 +90,6 @@ jobs:
           PY
             fi
 
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git pull --rebase origin main
             git add build-status/heart-dao-live.json
             if ! git diff --cached --quiet; then
               git commit -m "Update Heart Dao slideshow build progress"
