@@ -9,12 +9,13 @@
   "updated_at": "2026-07-31T00:28:51Z",
   "jobs_total": 19,
   "job_status_counts": {
-    "completed": 5,
-    "queued": 9,
+    "completed": 6,
+    "queued": 8,
     "in_progress": 5
   },
   "job_conclusion_counts": {
-    "success": 5
+    "success": 5,
+    "failure": 1
   },
   "jobs": [
     {
@@ -61,9 +62,9 @@
     },
     {
       "name": "Render 11_Become_the_Hearth",
-      "status": "queued",
+      "status": "in_progress",
       "conclusion": null,
-      "started_at": "2026-07-31T00:28:51Z",
+      "started_at": "2026-07-31T00:37:27Z",
       "completed_at": null
     },
     {
@@ -89,10 +90,10 @@
     },
     {
       "name": "Render 10_Purpose_and_the_Worthy_Flame",
-      "status": "in_progress",
-      "conclusion": null,
+      "status": "completed",
+      "conclusion": "failure",
       "started_at": "2026-07-31T00:35:26Z",
-      "completed_at": null
+      "completed_at": "2026-07-31T00:37:25Z"
     },
     {
       "name": "Render 05_The_First_Cultivation",
