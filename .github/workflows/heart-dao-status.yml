@@ -1,0 +1,59 @@
+name: Record Heart Dao Slideshow Status
+
+on:
+  workflow_run:
+    workflows:
+      - Build Heart Dao Silent Slideshows
+    types:
+      - completed
+
+permissions:
+  contents: write
+
+jobs:
+  record:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Write build status
+        shell: bash
+        env:
+          RUN_ID: ${{ github.event.workflow_run.id }}
+          RUN_NUMBER: ${{ github.event.workflow_run.run_number }}
+          STATUS: ${{ github.event.workflow_run.status }}
+          CONCLUSION: ${{ github.event.workflow_run.conclusion }}
+          HTML_URL: ${{ github.event.workflow_run.html_url }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+          CREATED_AT: ${{ github.event.workflow_run.created_at }}
+          UPDATED_AT: ${{ github.event.workflow_run.updated_at }}
+        run: |
+          mkdir -p build-status
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          data = {
+              "workflow": "Build Heart Dao Silent Slideshows",
+              "run_id": int(os.environ["RUN_ID"]),
+              "run_number": int(os.environ["RUN_NUMBER"]),
+              "status": os.environ["STATUS"],
+              "conclusion": os.environ["CONCLUSION"],
+              "html_url": os.environ["HTML_URL"],
+              "head_sha": os.environ["HEAD_SHA"],
+              "created_at": os.environ["CREATED_AT"],
+              "updated_at": os.environ["UPDATED_AT"],
+          }
+          Path("build-status/heart-dao-slideshows.json").write_text(
+              json.dumps(data, indent=2) + "\n", encoding="utf-8"
+          )
+          PY
+
+      - name: Commit status file
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add build-status/heart-dao-slideshows.json
+          git commit -m "Record Heart Dao slideshow build status" || exit 0
+          git push
