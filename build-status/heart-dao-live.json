@@ -9,12 +9,12 @@
   "updated_at": "2026-07-31T00:28:51Z",
   "jobs_total": 19,
   "job_status_counts": {
-    "completed": 9,
+    "completed": 10,
     "in_progress": 5,
-    "queued": 5
+    "queued": 4
   },
   "job_conclusion_counts": {
-    "success": 8,
+    "success": 9,
     "failure": 1
   },
   "jobs": [
@@ -104,9 +104,9 @@
     },
     {
       "name": "Render 13_Part_3_The_Unbroken_Sword",
-      "status": "queued",
+      "status": "in_progress",
       "conclusion": null,
-      "started_at": "2026-07-31T00:28:51Z",
+      "started_at": "2026-07-31T00:42:25Z",
       "completed_at": null
     },
     {
@@ -118,10 +118,10 @@
     },
     {
       "name": "Render 06_The_Five_Elements_of_the_Heart",
-      "status": "in_progress",
-      "conclusion": null,
+      "status": "completed",
+      "conclusion": "success",
       "started_at": "2026-07-31T00:34:29Z",
-      "completed_at": null
+      "completed_at": "2026-07-31T00:42:23Z"
     },
     {
       "name": "Render 15_Part_1_The_Seasons_Within_Us",
